@@ -27,7 +27,7 @@ fn main() -> Result<(), io::Error> {
         }
     }
 
-    let similar_blocks = util::find_similar_blocks(filtered_code_blocks);
+    let similar_blocks = util::similar(filtered_code_blocks, 0.98);
     util::report(similar_blocks);
 
     Ok(())

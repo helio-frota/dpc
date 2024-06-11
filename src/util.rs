@@ -126,9 +126,8 @@ pub fn block_counter(cb: &str) -> (i16, i16) {
     (chars, lines)
 }
 
-pub fn find_similar_blocks(blocks: Vec<String>) -> Vec<(String, String, f64)> {
+pub fn similar(blocks: Vec<String>, threshold: f64) -> Vec<(String, String, f64)> {
     let mut result = Vec::new();
-    let threshold = 0.98;
 
     for i in 0..blocks.len() {
         for j in i + 1..blocks.len() {
