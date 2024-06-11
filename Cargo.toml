@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-jaro_winkler = "0.1.0"
+strsim = "0.11"

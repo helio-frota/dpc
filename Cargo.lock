@@ -6,11 +6,11 @@ version = 3
 name = "dpc"
 version = "0.1.0"
 dependencies = [
- "jaro_winkler",
+ "strsim",
 ]
 
 [[package]]
-name = "jaro_winkler"
-version = "0.1.0"
+name = "strsim"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "966903d6b75c207539d45eef272e66e68542640adc142f15e9c9623f76f36b5f"
+checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"

@@ -3,22 +3,24 @@ use std::io::Read;
 use std::path::PathBuf;
 use std::{fs, io};
 
-#[derive(Debug)]
-struct SimilarBlock {
-    block1: String,
-    block2: String,
-    similarity: f64,
-}
+use strsim::sorensen_dice;
 
-impl SimilarBlock {
-    pub fn new(b1: String, b2: String, s: f64) -> SimilarBlock {
-        SimilarBlock {
-            block1: b1,
-            block2: b2,
-            similarity: s,
-        }
-    }
-}
+// #[derive(Debug)]
+// struct SimilarBlock {
+//     block1: String,
+//     block2: String,
+//     similarity: f64,
+// }
+
+// impl SimilarBlock {
+//     pub fn new(b1: String, b2: String, s: f64) -> SimilarBlock {
+//         SimilarBlock {
+//             block1: b1,
+//             block2: b2,
+//             similarity: s,
+//         }
+//     }
+// }
 
 /// This function gets all the .rs files from a directory, and returns a
 /// vector with all the paths of the .rs files.
@@ -141,19 +143,19 @@ fn block_counter(cb: &str) -> (i16, i16) {
     (chars, lines)
 }
 
-fn find_similar_blocks(blocks: Vec<String>) -> Vec<SimilarBlock> {
+fn find_similar_blocks(blocks: Vec<String>) -> Vec<(String, String, f64)> {
     let mut result = Vec::new();
     let threshold = 0.98;
 
     for i in 0..blocks.len() {
         for j in i + 1..blocks.len() {
-            let similarity = jaro_winkler::jaro_winkler(blocks[i].as_str(), blocks[j].as_str());
-            if similarity >= threshold {
-                result.push(SimilarBlock::new(
-                    blocks[i].clone(),
-                    blocks[j].clone(),
-                    similarity,
-                ));
+            let b1 = blocks[i].as_str();
+            let b2 = blocks[j].as_str();
+            let similarity = sorensen_dice(b1, b2);
+
+            if similarity > threshold {
+                let t = (b1.to_string(), b2.to_string(), similarity);
+                result.push(t);
             }
         }
     }
@@ -189,14 +191,14 @@ fn main() -> Result<(), io::Error> {
         println!("# Duplicrabs\n");
 
         for (idx, s) in similar_blocks.iter().enumerate() {
-            let mut b1: Vec<&str> = s.block1.split('\n').collect();
+            let mut b1: Vec<&str> = s.0.split('\n').collect();
             let f1 = b1.pop();
-            let mut b2: Vec<&str> = s.block2.split('\n').collect();
+            let mut b2: Vec<&str> = s.1.split('\n').collect();
             let f2 = b2.pop();
 
             println!("### crab {}\n", idx);
 
-            if s.similarity == 1.0 {
+            if s.2 == 1.0 {
                 println!("> [!TIP]\n> Exactly the same\n");
             } else {
                 println!("> [!WARNING]\n> Almost the same\n");
