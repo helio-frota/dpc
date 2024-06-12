@@ -19,7 +19,7 @@ pub fn rust_files(dir: &str) -> Result<Vec<PathBuf>, io::Error> {
         if path.is_dir() {
             if let Some(file_name) = path.file_name() {
                 if let Some(file_name_str) = file_name.to_str() {
-                    if file_name_str.contains("target") || file_name_str.contains("test") {
+                    if file_name_str.contains("target") {
                         continue;
                     }
                 }
@@ -80,18 +80,6 @@ pub fn code_blocks(content: &str) -> Vec<String> {
             continue;
         }
 
-        // discards comments
-        if lines[i].trim().contains("//") {
-            i += 1;
-            continue;
-        }
-
-        // discards comments
-        if lines[i].trim().contains("///") {
-            i += 1;
-            continue;
-        }
-
         // Creates a temporary code-block vector of lines.
         let mut block_lines: Vec<String> = Vec::new();
         block_lines.push(lines[i].clone());
@@ -145,9 +133,10 @@ pub fn similar(blocks: Vec<String>, threshold: f64) -> Vec<(String, String, f64)
     result
 }
 
-pub fn report(similar_blocks: Vec<(String, String, f64)>) {
+pub fn report(similar_blocks: Vec<(String, String, f64)>) -> String {
+    let mut out = String::new();
     if !similar_blocks.is_empty() {
-        println!("# Duplicrabs\n");
+        out.push_str("# Duplicrabs\n\n");
 
         for (idx, s) in similar_blocks.iter().enumerate() {
             let mut b1: Vec<&str> = s.0.split('\n').collect();
@@ -155,22 +144,27 @@ pub fn report(similar_blocks: Vec<(String, String, f64)>) {
             let mut b2: Vec<&str> = s.1.split('\n').collect();
             let f2 = b2.pop();
 
-            println!("### crab {}\n", idx + 1);
+            out.push_str(format!("### \u{1F980} {}\n\n", idx + 1).as_str());
 
             if s.2 == 1.0 {
-                println!("> [!TIP]\n> Exactly the same\n");
+                out.push_str("> [!TIP]\n> Exactly the same\n\n");
             } else {
-                println!("> [!WARNING]\n> Almost the same\n");
+                out.push_str("> [!WARNING]\n> Almost the same\n\n");
             }
 
-            println!("```rust");
-            println!("{}", b1.join("\n"));
-            println!("```\n");
-            println!("`{}`\n", f1.unwrap_or("n/a"));
-            println!("```rust");
-            println!("{}", b2.join("\n"));
-            println!("```\n");
-            println!("`{}`\n", f2.unwrap_or("n/a"));
+            out.push_str("```rust\n");
+            out.push_str(format!("{}\n", b1.join("\n").as_str()).as_str());
+            out.push_str("```\n\n");
+
+            out.push_str(format!("`{}`\n\n", f1.unwrap_or("n/a")).as_str());
+
+            out.push_str("```rust\n");
+            out.push_str(format!("{}\n", b2.join("\n").as_str()).as_str());
+            out.push_str("```\n\n");
+
+            out.push_str(format!("`{}`\n\n", f2.unwrap_or("n/a")).as_str());
         }
     }
+    println!("{}", out);
+    out
 }

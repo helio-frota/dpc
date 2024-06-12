@@ -23,14 +23,6 @@ mod tests {
         let content = util::content(&path_as_str);
         let blocks = util::code_blocks(content.unwrap().as_str());
         assert!(!blocks[0].is_empty());
-
-        let mut use_found = false;
-        for b in blocks {
-            if b.contains("use") {
-                use_found = true;
-            }
-        }
-        assert!(!use_found);
     }
 
     #[test]
@@ -61,5 +53,18 @@ mod tests {
             assert!(!s.1.is_empty());
             assert!(s.2 > 0.10);
         }
+    }
+
+    #[test]
+    fn test_report() {
+        let files = util::rust_files(".").expect("rust files not found.");
+        let path_as_str = files[0].to_string_lossy();
+        let content = util::content(&path_as_str);
+        let blocks = util::code_blocks(content.unwrap().as_str());
+        // Intentionally lowering the threshold to test something
+        let similar_found = util::similar(blocks, 0.10);
+        let out = util::report(similar_found);
+        assert!(out.contains("Duplicrabs"));
+        assert!(out.contains("Almost the same"));
     }
 }
