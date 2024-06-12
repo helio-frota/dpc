@@ -23,7 +23,6 @@ fn main() -> Result<(), io::Error> {
     let mut filtered_code_blocks: Vec<String> = Vec::new();
 
     for r in &rust_files {
-
         // Some stuff to show the file name on duplicrabs report later.
         let r_as_string = r.to_string_lossy();
         let the_index = r_as_string
