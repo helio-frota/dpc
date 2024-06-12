@@ -123,7 +123,7 @@ pub fn similar(blocks: Vec<String>, threshold: f64) -> Vec<(String, String, f64)
             let b2 = blocks[j].as_str();
             let similarity = sorensen_dice(b1, b2);
 
-            if similarity > threshold {
+            if similarity >= threshold {
                 let t = (b1.to_string(), b2.to_string(), similarity);
                 result.push(t);
             }

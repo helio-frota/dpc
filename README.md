@@ -9,9 +9,13 @@ Basic and not 100% accurate for finding duplicate code blocks in Rust projects.
 clone and run
 
 ```shell
-cargo run /home/foobar/Desktop/guac-rs
+cargo run --release /home/foobar/Desktop/guac-rs
 or
-cargo run /home/foobar/Desktop/guac-rs > out.md
+cargo run --release /home/foobar/Desktop/guac-rs > out.md
+
+pass whatever 3rd argument to show only exactly the same information on report
+
+cargo run --release /home/foobar/Desktop/guac-rs abcde > out.md
 ```
 
 [Example](./out.md)

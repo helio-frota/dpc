@@ -7,9 +7,12 @@ mod test;
 
 fn main() -> Result<(), io::Error> {
     let args: Vec<String> = env::args().collect();
+    let mut threshold = 0.98;
     if args.len() < 2 {
         eprintln!("Usage: dpc .  or dpc /home/foobar/rust_project");
         process::exit(1);
+    } else if args.len() == 3 {
+        threshold = 1.0;
     }
 
     let dir = &args[1];
@@ -45,7 +48,7 @@ fn main() -> Result<(), io::Error> {
 
     // Like the 150 and 2 above ^, this 0.98 is total opinionated...
     // if we lower this we have more "almost the same" stuff.
-    let similar_blocks = util::similar(filtered_code_blocks, 0.98);
+    let similar_blocks = util::similar(filtered_code_blocks, threshold);
     util::report(similar_blocks);
 
     Ok(())
