@@ -101,13 +101,13 @@ pub fn code_blocks(content: &str) -> Vec<String> {
 
 // This counts lines and chars from code-block
 // to make opinionated checks later.
-pub fn block_counter(cb: &str) -> (i16, i16) {
+pub fn block_counter(cb: &str) -> (u16, u8) {
     let mut chars = 0;
     let mut lines = 0;
 
     for line in cb.lines() {
         let trimmed = line.trim();
-        chars += trimmed.len() as i16;
+        chars += trimmed.len() as u16;
         lines += 1;
     }
 
@@ -165,6 +165,6 @@ pub fn report(similar_blocks: Vec<(String, String, f64)>) -> String {
             out.push_str(format!("`{}`\n\n", f2.unwrap_or("n/a")).as_str());
         }
     }
-    println!("{}", out);
+    println!("{out}");
     out
 }
