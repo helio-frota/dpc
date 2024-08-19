@@ -9,6 +9,7 @@ use strsim::sorensen_dice;
 /// vector with all the paths of the .rs files.
 pub fn rust_files(dir: &str, ignore: &str) -> Result<Vec<PathBuf>, io::Error> {
     let mut files = Vec::new();
+    let list_ignore: Vec<&str> = ignore.split(',').collect();
     // Gets all the entries from 'current|argument' dir.
     let entries = fs::read_dir(dir)?;
 
@@ -19,7 +20,7 @@ pub fn rust_files(dir: &str, ignore: &str) -> Result<Vec<PathBuf>, io::Error> {
         if path.is_dir() {
             if let Some(file_name) = path.file_name() {
                 if let Some(file_name_str) = file_name.to_str() {
-                    if !ignore.is_empty() && (file_name_str.contains(ignore))
+                    if list_ignore.iter().any(|&i| file_name_str.contains(i))
                         || file_name_str.contains("target")
                     {
                         continue;
@@ -32,6 +33,10 @@ pub fn rust_files(dir: &str, ignore: &str) -> Result<Vec<PathBuf>, io::Error> {
             // .rs found ? Then add to the vector.
             files.extend(temp);
         } else if let Some(file_name) = path.file_name() {
+            let file_name_str = file_name.to_string_lossy();
+            if list_ignore.contains(&"test") && file_name_str.ends_with("test.rs") {
+                continue;
+            }
             // Not a dir and .rs
             if file_name.to_string_lossy().ends_with(".rs") {
                 // Then adds to the vector.
@@ -57,25 +62,15 @@ pub fn code_blocks(content: &str) -> Vec<String> {
     let mut code_blocks: Vec<String> = Vec::new();
     // loop the lines and discard some stuff.
     while i < lines.len() {
-        if lines[i].trim().is_empty() {
-            i += 1;
-            continue;
-        }
-
-        // discards imports / use stuff
-        if lines[i].trim().contains("use crate") {
-            i += 1;
-            continue;
-        }
-
-        // discards imports / use stuff
-        if lines[i].trim().contains("use") {
-            i += 1;
-            continue;
-        }
-
-        // discards imports / use stuff
-        if lines[i].trim().contains("pub mod") {
+        let trimmed = lines[i].trim();
+        if trimmed.is_empty()
+            || trimmed.contains("use")
+            || trimmed.starts_with("use")
+            || trimmed.contains("use crate")
+            || trimmed.contains("pub mod")
+            || trimmed.starts_with("//")
+            || trimmed.starts_with("///")
+        {
             i += 1;
             continue;
         }
