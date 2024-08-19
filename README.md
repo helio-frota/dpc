@@ -69,4 +69,3 @@ cargo run --release -- -d /home/foobar/Desktop/guac-rs/ **-t 0.5**
 
 `guac-rs/lib/tests/vulnerability.rs`
 ```
-```
