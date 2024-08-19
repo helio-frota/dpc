@@ -24,7 +24,7 @@ Increase the threshold to 1 with `-t 1` to print only exactly the same code bloc
 cargo run --release -- -d /home/foobar/Desktop/guac-rs -t 1
 ```
 
-Ignores the scanning code on tests directory
+Ignore scanning the code on tests directory
 
 ```shell
 cargo run --release -- -d /home/heliofrota/Desktop/tc/guac-rs/ -i tests
