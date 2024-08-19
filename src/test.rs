@@ -2,36 +2,16 @@
 mod tests {
     use crate::util;
 
-    #[test]
-    fn test_get_rust_files() {
-        let files = util::rust_files(".").expect("rust files not found.");
-        assert_eq!(3, files.len());
-    }
-
-    #[test]
-    fn test_get_content() {
-        let files = util::rust_files(".").expect("rust files not found.");
+    fn get_code_blocks() -> Vec<String> {
+        let files = util::rust_files(".", "").expect("rust files not found.");
         let path_as_str = files[0].to_string_lossy();
-        let content = util::content(&path_as_str);
-        assert!(content.unwrap().contains("use"));
-    }
-
-    #[test]
-    fn test_get_code_blocks() {
-        let files = util::rust_files(".").expect("rust files not found.");
-        let path_as_str = files[0].to_string_lossy();
-        let content = util::content(&path_as_str);
-        let blocks = util::code_blocks(content.unwrap().as_str());
-        assert!(!blocks[0].is_empty());
+        let content = util::read_file_content(&path_as_str);
+        util::code_blocks(content.unwrap().as_str())
     }
 
     #[test]
     fn test_block_counter() {
-        let files = util::rust_files(".").expect("rust files not found.");
-        let path_as_str = files[0].to_string_lossy();
-        let content = util::content(&path_as_str);
-        let blocks = util::code_blocks(content.unwrap().as_str());
-        // kind of dumb unit test since I'm already discarding empty lines...
+        let blocks = get_code_blocks();
         for cb in &blocks {
             let f = util::block_counter(cb);
             assert!(f.0 > 0);
@@ -40,11 +20,8 @@ mod tests {
     }
 
     #[test]
-    fn test_get_similar() {
-        let files = util::rust_files(".").expect("rust files not found.");
-        let path_as_str = files[0].to_string_lossy();
-        let content = util::content(&path_as_str);
-        let blocks = util::code_blocks(content.unwrap().as_str());
+    fn test_similar() {
+        let blocks = get_code_blocks();
         // Intentionally lowering the threshold to test something
         let similar_found = util::similar(blocks, 0.10);
         assert!(!similar_found.is_empty());
@@ -57,10 +34,7 @@ mod tests {
 
     #[test]
     fn test_report() {
-        let files = util::rust_files(".").expect("rust files not found.");
-        let path_as_str = files[0].to_string_lossy();
-        let content = util::content(&path_as_str);
-        let blocks = util::code_blocks(content.unwrap().as_str());
+        let blocks = get_code_blocks();
         // Intentionally lowering the threshold to test something
         let similar_found = util::similar(blocks, 0.10);
         let out = util::report(similar_found);

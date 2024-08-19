@@ -7,7 +7,7 @@ use strsim::sorensen_dice;
 
 /// This function gets all the .rs files from a directory, and returns a
 /// vector with all the paths of the .rs files.
-pub fn rust_files(dir: &str) -> Result<Vec<PathBuf>, io::Error> {
+pub fn rust_files(dir: &str, ignore: &str) -> Result<Vec<PathBuf>, io::Error> {
     let mut files = Vec::new();
     // Gets all the entries from 'current|argument' dir.
     let entries = fs::read_dir(dir)?;
@@ -19,14 +19,16 @@ pub fn rust_files(dir: &str) -> Result<Vec<PathBuf>, io::Error> {
         if path.is_dir() {
             if let Some(file_name) = path.file_name() {
                 if let Some(file_name_str) = file_name.to_str() {
-                    if file_name_str.contains("target") {
+                    if !ignore.is_empty() && (file_name_str.contains(ignore))
+                        || file_name_str.contains("target")
+                    {
                         continue;
                     }
                 }
             }
 
             // Take a look at sub dir
-            let temp = rust_files(&path.to_string_lossy())?;
+            let temp = rust_files(&path.to_string_lossy(), ignore)?;
             // .rs found ? Then add to the vector.
             files.extend(temp);
         } else if let Some(file_name) = path.file_name() {
@@ -41,8 +43,7 @@ pub fn rust_files(dir: &str) -> Result<Vec<PathBuf>, io::Error> {
     Ok(files)
 }
 
-// Reads file content.
-pub fn content(path: &str) -> Result<String, io::Error> {
+pub fn read_file_content(path: &str) -> Result<String, io::Error> {
     let mut f = File::open(path)?;
     let mut c = String::new();
     f.read_to_string(&mut c)?;
@@ -56,7 +57,6 @@ pub fn code_blocks(content: &str) -> Vec<String> {
     let mut code_blocks: Vec<String> = Vec::new();
     // loop the lines and discard some stuff.
     while i < lines.len() {
-        // discards empty line
         if lines[i].trim().is_empty() {
             i += 1;
             continue;
@@ -138,31 +138,58 @@ pub fn report(similar_blocks: Vec<(String, String, f64)>) -> String {
     if !similar_blocks.is_empty() {
         out.push_str("# Duplicrabs\n\n");
 
-        for (idx, s) in similar_blocks.iter().enumerate() {
+        let mut exact = String::new();
+        let mut almost = String::new();
+
+        let mut exact_idx = 1;
+        let mut almost_idx = 1;
+
+        for s in similar_blocks.iter() {
             let mut b1: Vec<&str> = s.0.split('\n').collect();
             let f1 = b1.pop();
             let mut b2: Vec<&str> = s.1.split('\n').collect();
             let f2 = b2.pop();
 
-            out.push_str(format!("### \u{1F980} {}\n\n", idx + 1).as_str());
+            let mut block = String::new();
 
             if s.2 == 1.0 {
-                out.push_str("> [!TIP]\n> Exactly the same\n\n");
+                block.push_str(format!("### \u{1F980} {}\n\n", exact_idx).as_str());
+                exact_idx += 1;
+                // exact.push_str(&block);
             } else {
-                out.push_str("> [!WARNING]\n> Almost the same\n\n");
+                block.push_str(format!("### \u{1F980} {}\n\n", almost_idx).as_str());
+                almost_idx += 1;
+                // almost.push_str(&block);
             }
 
-            out.push_str("```rust\n");
-            out.push_str(format!("{}\n", b1.join("\n").as_str()).as_str());
-            out.push_str("```\n\n");
+            block.push_str("```rust\n");
+            block.push_str(format!("{}\n", b1.join("\n").as_str()).as_str());
+            block.push_str("```\n\n");
 
-            out.push_str(format!("`{}`\n\n", f1.unwrap_or("n/a")).as_str());
+            block.push_str(format!("`{}`\n\n", f1.unwrap_or("n/a")).as_str());
 
-            out.push_str("```rust\n");
-            out.push_str(format!("{}\n", b2.join("\n").as_str()).as_str());
-            out.push_str("```\n\n");
+            block.push_str("```rust\n");
+            block.push_str(format!("{}\n", b2.join("\n").as_str()).as_str());
+            block.push_str("```\n\n");
 
-            out.push_str(format!("`{}`\n\n", f2.unwrap_or("n/a")).as_str());
+            block.push_str(format!("`{}`\n\n", f2.unwrap_or("n/a")).as_str());
+
+            // out.push_str(format!("### \u{1F980} {}\n\n", idx + 1).as_str());
+            if s.2 == 1.0 {
+                exact.push_str(&block);
+            } else {
+                almost.push_str(&block);
+            }
+        }
+
+        if !exact.is_empty() {
+            out.push_str("> [!TIP]\n> Exactly the same\n\n");
+            out.push_str(&exact);
+        }
+
+        if !almost.is_empty() {
+            out.push_str("> [!WARNING]\n> Almost the same\n\n");
+            out.push_str(&almost);
         }
     }
     println!("{out}");

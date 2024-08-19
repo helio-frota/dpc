@@ -1,27 +1,37 @@
-use std::{env, io, path::Path, process};
+use std::{io, path::Path};
 
 mod util;
+use clap::Parser;
 
 #[cfg(test)]
 mod test;
 
-fn main() -> Result<(), io::Error> {
-    let args: Vec<String> = env::args().collect();
-    let mut threshold = 0.98;
-    if args.len() < 2 {
-        eprintln!("Usage: dpc .  or dpc /home/foobar/rust_project");
-        process::exit(1);
-    } else if args.len() == 3 {
-        threshold = 1.0;
-    }
+#[derive(Parser, Debug)]
+#[command(name = "dpc")]
+#[command(bin_name = "dpc")]
+struct Cli {
+    /// Rust code root directory
+    #[arg(short, value_name = "DIR", default_value_t = String::from("."))]
+    d: String,
+    /// 1.0 for exact same code blocks (Using 0.98 for similar blocks)
+    #[arg(short, value_name = "threshold", default_value_t = 0.98)]
+    t: f64,
+    /// Ignores scanning with the provided dir name
+    #[arg(short, value_name = "ignore")]
+    i: String,
+}
 
-    let dir = &args[1];
-    let last_dir = Path::new(dir)
+fn main() -> Result<(), io::Error> {
+    let args = Cli::parse();
+
+    //let mut threshold = args.t;
+    let dir = args.d;
+    let last_dir = Path::new(&dir)
         .file_name()
         .and_then(|os_str| os_str.to_str())
-        .unwrap_or("Something happened and who cares...");
+        .unwrap_or("Something happened...");
 
-    let rust_files = util::rust_files(dir)?;
+    let rust_files = util::rust_files(&dir, args.i.as_str())?;
 
     let mut filtered_code_blocks: Vec<String> = Vec::new();
 
@@ -33,7 +43,7 @@ fn main() -> Result<(), io::Error> {
             .unwrap_or_else(|| r_as_string.len());
         let file_name = &r_as_string[the_index..];
 
-        let content = util::content(r.to_string_lossy().into_owned().as_str())?;
+        let content = util::read_file_content(r.to_string_lossy().into_owned().as_str())?;
         let cbs = util::code_blocks(content.as_str());
 
         for cb in &cbs {
@@ -46,9 +56,7 @@ fn main() -> Result<(), io::Error> {
         }
     }
 
-    // Like the 150 and 2 above ^, this 0.98 is total opinionated...
-    // if we lower this we have more "almost the same" stuff.
-    let similar_blocks = util::similar(filtered_code_blocks, threshold);
+    let similar_blocks = util::similar(filtered_code_blocks, args.t);
     util::report(similar_blocks);
 
     Ok(())

@@ -1,9 +1,172 @@
 # Duplicrabs
 
+> [!TIP]
+> Exactly the same
+
 ### 🦀 1
+
+```rust
+        if let Some(errors) = response_body.errors {
+            //TODO fix query not to return error in this case
+            for error in errors.clone().into_iter() {
+                if error.message == "failed to locate package based on purl" {
+                    return Ok(HashMap::new());
+                }
+            }
+            return Err(Error::GraphQL(errors));
+        }
+```
+
+`guac-rs/lib/src/client/semantic/spog/mod.rs`
+
+```rust
+        if let Some(errors) = response_body.errors {
+            //TODO fix query not to return error in this case
+            for error in errors.clone().into_iter() {
+                if error.message == "failed to locate package based on purl" {
+                    return Ok(HashMap::new());
+                }
+            }
+            return Err(Error::GraphQL(errors));
+        }
+```
+
+`guac-rs/lib/src/client/semantic/spog/mod.rs`
+
+### 🦀 2
+
+```rust
+    client
+        .intrinsic()
+        .ingest_is_dependency(
+            &pkg_a.clone().into(),
+            &pkg_b.clone().into(),
+            PkgMatchType::SpecificVersion,
+            &IsDependencyInputSpec {
+                version_range: "".to_string(),
+                dependency_type: DependencyType::Direct,
+                justification: "dep-justification".to_string(),
+                origin: "dep-origin".to_string(),
+                collector: "dep-collector".to_string(),
+            },
+        )
+        .await?;
+```
+
+`guac-rs/lib/tests/is_dependency.rs`
+
+```rust
+    client
+        .intrinsic()
+        .ingest_is_dependency(
+            &pkg_a.clone().into(),
+            &pkg_b.clone().into(),
+            PkgMatchType::SpecificVersion,
+            &IsDependencyInputSpec {
+                version_range: "".to_string(),
+                dependency_type: DependencyType::Direct,
+                justification: "dep-justification".to_string(),
+                origin: "dep-origin".to_string(),
+                collector: "dep-collector".to_string(),
+            },
+        )
+        .await?;
+```
+
+`guac-rs/lib/tests/is_dependency.rs`
+
+### 🦀 3
+
+```rust
+            $client
+                .intrinsic()
+                .ingest_is_dependency(
+                    &pkg_a.clone().into(),
+                    &pkg_b.clone().into(),
+                    PkgMatchType::SpecificVersion,
+                    &IsDependencyInputSpec {
+                        version_range: "".to_string(),
+                        dependency_type: DependencyType::Direct,
+                        justification: "justification".to_string(),
+                        origin: "test-origin".to_string(),
+                        collector: "test-collector".to_string(),
+                    },
+                )
+                .await?;
+        };
+    }
+```
+
+`guac-rs/lib/tests/path.rs`
+
+```rust
+            $client
+                .intrinsic()
+                .ingest_is_dependency(
+                    &pkg_a.clone().into(),
+                    &pkg_b.clone().into(),
+                    PkgMatchType::SpecificVersion,
+                    &IsDependencyInputSpec {
+                        version_range: "".to_string(),
+                        dependency_type: DependencyType::Direct,
+                        justification: "justification".to_string(),
+                        origin: "test-origin".to_string(),
+                        collector: "test-collector".to_string(),
+                    },
+                )
+                .await?;
+        };
+    }
+```
+
+`guac-rs/lib/tests/path.rs`
+
+### 🦀 4
+
+```rust
+    add_dep!(client, "pkg:rpm/your-app@1.0", "pkg:rpm/log4j@1.0");
+    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-a@1.0");
+    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-b@1.0");
+    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-c@1.0");
+```
+
+`guac-rs/lib/tests/path.rs`
+
+```rust
+    add_dep!(client, "pkg:rpm/your-app@1.0", "pkg:rpm/log4j@1.0");
+    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-a@1.0");
+    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-b@1.0");
+    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-c@1.0");
+```
+
+`guac-rs/lib/tests/path.rs`
+
+### 🦀 5
+
+```rust
+    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-c@1.0");
+    add_dep!(client, "pkg:rpm/component-c@1.0", "pkg:rpm/component-d@1.0");
+    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-d@1.0");
+    add_dep!(client, "pkg:rpm/component-d@1.0", "pkg:rpm/component-e@1.0");
+    add_dep!(client, "pkg:rpm/component-e@1.0", "pkg:rpm/log4j@1.0");
+```
+
+`guac-rs/lib/tests/path.rs`
+
+```rust
+    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-c@1.0");
+    add_dep!(client, "pkg:rpm/component-c@1.0", "pkg:rpm/component-d@1.0");
+    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-d@1.0");
+    add_dep!(client, "pkg:rpm/component-d@1.0", "pkg:rpm/component-e@1.0");
+    add_dep!(client, "pkg:rpm/component-e@1.0", "pkg:rpm/log4j@1.0");
+```
+
+`guac-rs/lib/tests/path.rs`
 
 > [!WARNING]
 > Almost the same
+
+### 🦀 1
 
 ```rust
 #[derive(Clone, Debug, clap::Args)]
@@ -34,9 +197,6 @@ pub struct CertifyBadCommand {
 `guac-rs/cli/src/certify.rs`
 
 ### 🦀 2
-
-> [!WARNING]
-> Almost the same
 
 ```rust
 impl From<&PkgInputSpec> for ingest_certify_bad::PkgInputSpec {
@@ -73,9 +233,6 @@ impl From<&PkgInputSpec> for ingest_certify_good::PkgInputSpec {
 `guac-rs/lib/src/client/intrinsic/certify_good/ingest.rs`
 
 ### 🦀 3
-
-> [!WARNING]
-> Almost the same
 
 ```rust
 impl From<&PkgSpec> for query_certify_bad::PkgSpec {
@@ -123,9 +280,6 @@ impl From<&PkgSpec> for query_certify_good::PkgSpec {
 
 ### 🦀 4
 
-> [!WARNING]
-> Almost the same
-
 ```rust
 impl From<&PkgSpec> for query_certify_bad::PkgSpec {
     fn from(value: &PkgSpec) -> Self {
@@ -172,9 +326,6 @@ impl From<&PkgSpec> for query_certify_vuln::PkgSpec {
 
 ### 🦀 5
 
-> [!WARNING]
-> Almost the same
-
 ```rust
 impl From<&allCertifyVEXStatementTree> for CertifyVexStatement {
     fn from(value: &allCertifyVEXStatementTree) -> Self {
@@ -218,9 +369,6 @@ impl From<&allCertifyVEXStatementTree> for CertifyVexStatement {
 `guac-rs/lib/src/client/semantic/spog/find_vulnerability_by_sbom_uri.rs`
 
 ### 🦀 6
-
-> [!WARNING]
-> Almost the same
 
 ```rust
 impl From<&allCertifyVEXStatementTree> for CertifyVexStatement {
@@ -266,9 +414,6 @@ impl From<&allCertifyVEXStatementTree> for CertifyVexStatement {
 
 ### 🦀 7
 
-> [!WARNING]
-> Almost the same
-
 ```rust
 impl From<&FVVexStatus> for VexStatus {
     fn from(value: &FVVexStatus) -> Self {
@@ -303,9 +448,6 @@ impl From<&FVVexStatus> for VexStatus {
 
 ### 🦀 8
 
-> [!WARNING]
-> Almost the same
-
 ```rust
 impl From<&AllCertifyVexStatementTreeSubject> for PackageOrArtifact {
     fn from(value: &AllCertifyVexStatementTreeSubject) -> Self {
@@ -338,9 +480,6 @@ impl From<&AllCertifyVexStatementTreeSubject> for PackageOrArtifact {
 
 ### 🦀 9
 
-> [!WARNING]
-> Almost the same
-
 ```rust
 impl From<&AllCertifyVexStatementTreeSubjectOnPackageNamespacesNamesVersions> for PackageVersion {
     fn from(value: &AllCertifyVexStatementTreeSubjectOnPackageNamespacesNamesVersions) -> Self {
@@ -372,9 +511,6 @@ impl From<&AllCertifyVexStatementTreeSubjectOnPackageNamespacesNamesVersions> fo
 `guac-rs/lib/src/client/semantic/spog/find_vulnerability_by_sbom_uri.rs`
 
 ### 🦀 10
-
-> [!WARNING]
-> Almost the same
 
 ```rust
 impl From<&FVVexJustification> for VexJustification {
@@ -418,9 +554,6 @@ impl From<&FVVexJustification> for VexJustification {
 
 ### 🦀 11
 
-> [!WARNING]
-> Almost the same
-
 ```rust
 impl From<&AllCertifyVulnTreeMetadata> for ScanMetadata {
     fn from(value: &AllCertifyVulnTreeMetadata) -> Self {
@@ -459,9 +592,6 @@ impl From<&AllCertifyVulnTreeMetadata> for ScanMetadata {
 
 ### 🦀 12
 
-> [!WARNING]
-> Almost the same
-
 ```rust
 impl From<&AllCertifyVulnTreePackageNamespacesNamesVersions> for PackageVersion {
     fn from(value: &AllCertifyVulnTreePackageNamespacesNamesVersions) -> Self {
@@ -493,87 +623,6 @@ impl From<&AllCertifyVulnTreePackageNamespacesNamesVersions> for PackageVersion 
 `guac-rs/lib/src/client/semantic/spog/find_vulnerability_by_sbom_uri.rs`
 
 ### 🦀 13
-
-> [!TIP]
-> Exactly the same
-
-```rust
-        if let Some(errors) = response_body.errors {
-            //TODO fix query not to return error in this case
-            for error in errors.clone().into_iter() {
-                if error.message == "failed to locate package based on purl" {
-                    return Ok(HashMap::new());
-                }
-            }
-            return Err(Error::GraphQL(errors));
-        }
-```
-
-`guac-rs/lib/src/client/semantic/spog/mod.rs`
-
-```rust
-        if let Some(errors) = response_body.errors {
-            //TODO fix query not to return error in this case
-            for error in errors.clone().into_iter() {
-                if error.message == "failed to locate package based on purl" {
-                    return Ok(HashMap::new());
-                }
-            }
-            return Err(Error::GraphQL(errors));
-        }
-```
-
-`guac-rs/lib/src/client/semantic/spog/mod.rs`
-
-### 🦀 14
-
-> [!TIP]
-> Exactly the same
-
-```rust
-    client
-        .intrinsic()
-        .ingest_is_dependency(
-            &pkg_a.clone().into(),
-            &pkg_b.clone().into(),
-            PkgMatchType::SpecificVersion,
-            &IsDependencyInputSpec {
-                version_range: "".to_string(),
-                dependency_type: DependencyType::Direct,
-                justification: "dep-justification".to_string(),
-                origin: "dep-origin".to_string(),
-                collector: "dep-collector".to_string(),
-            },
-        )
-        .await?;
-```
-
-`guac-rs/lib/tests/is_dependency.rs`
-
-```rust
-    client
-        .intrinsic()
-        .ingest_is_dependency(
-            &pkg_a.clone().into(),
-            &pkg_b.clone().into(),
-            PkgMatchType::SpecificVersion,
-            &IsDependencyInputSpec {
-                version_range: "".to_string(),
-                dependency_type: DependencyType::Direct,
-                justification: "dep-justification".to_string(),
-                origin: "dep-origin".to_string(),
-                collector: "dep-collector".to_string(),
-            },
-        )
-        .await?;
-```
-
-`guac-rs/lib/tests/is_dependency.rs`
-
-### 🦀 15
-
-> [!WARNING]
-> Almost the same
 
 ```rust
     let dep_a_b_id = client
@@ -615,10 +664,7 @@ impl From<&AllCertifyVulnTreePackageNamespacesNamesVersions> for PackageVersion 
 
 `guac-rs/lib/tests/path.rs`
 
-### 🦀 16
-
-> [!WARNING]
-> Almost the same
+### 🦀 14
 
 ```rust
     let _vuln_a = client
@@ -668,107 +714,33 @@ impl From<&AllCertifyVulnTreePackageNamespacesNamesVersions> for PackageVersion 
 
 `guac-rs/lib/tests/path.rs`
 
-### 🦀 17
-
-> [!TIP]
-> Exactly the same
+### 🦀 15
 
 ```rust
-            $client
-                .intrinsic()
-                .ingest_is_dependency(
-                    &pkg_a.clone().into(),
-                    &pkg_b.clone().into(),
-                    PkgMatchType::SpecificVersion,
-                    &IsDependencyInputSpec {
-                        version_range: "".to_string(),
-                        dependency_type: DependencyType::Direct,
-                        justification: "justification".to_string(),
-                        origin: "test-origin".to_string(),
-                        collector: "test-collector".to_string(),
-                    },
-                )
-                .await?;
-        };
-    }
+//TODO do proper testing
+// ./bin/guacone collect files --gql-addr http://localhost:8085/query ./rhel-7.9.z.json
+// ./bin/guacone collect files --gql-addr http://localhost:8085/query ./cve-2022-2284.json
+#[ignore]
+#[tokio::test]
+async fn find_vulnerability() -> Result<(), anyhow::Error> {
+    let client = GuacClient::new("http://localhost:8085/query");
 ```
 
-`guac-rs/lib/tests/path.rs`
+`guac-rs/lib/tests/spog.rs`
 
 ```rust
-            $client
-                .intrinsic()
-                .ingest_is_dependency(
-                    &pkg_a.clone().into(),
-                    &pkg_b.clone().into(),
-                    PkgMatchType::SpecificVersion,
-                    &IsDependencyInputSpec {
-                        version_range: "".to_string(),
-                        dependency_type: DependencyType::Direct,
-                        justification: "justification".to_string(),
-                        origin: "test-origin".to_string(),
-                        collector: "test-collector".to_string(),
-                    },
-                )
-                .await?;
-        };
-    }
+//TODO do proper testing
+// ./bin/guacone collect files --gql-addr http://localhost:8085/query ./rhel-7.9.z.json
+// ./bin/guacone collect files --gql-addr http://localhost:8085/query ./cve-2022-2284.json
+#[ignore]
+#[tokio::test]
+async fn find_vulnerability_by_sbom_uri() -> Result<(), anyhow::Error> {
+    let client = GuacClient::new("http://localhost:8085/query");
 ```
 
-`guac-rs/lib/tests/path.rs`
+`guac-rs/lib/tests/spog.rs`
 
-### 🦀 18
-
-> [!TIP]
-> Exactly the same
-
-```rust
-    add_dep!(client, "pkg:rpm/your-app@1.0", "pkg:rpm/log4j@1.0");
-    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-a@1.0");
-    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-b@1.0");
-    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-c@1.0");
-```
-
-`guac-rs/lib/tests/path.rs`
-
-```rust
-    add_dep!(client, "pkg:rpm/your-app@1.0", "pkg:rpm/log4j@1.0");
-    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-a@1.0");
-    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-b@1.0");
-    add_dep!(client, "pkg:rpm/myapp@1.0", "pkg:rpm/component-c@1.0");
-```
-
-`guac-rs/lib/tests/path.rs`
-
-### 🦀 19
-
-> [!TIP]
-> Exactly the same
-
-```rust
-    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-c@1.0");
-    add_dep!(client, "pkg:rpm/component-c@1.0", "pkg:rpm/component-d@1.0");
-    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-d@1.0");
-    add_dep!(client, "pkg:rpm/component-d@1.0", "pkg:rpm/component-e@1.0");
-    add_dep!(client, "pkg:rpm/component-e@1.0", "pkg:rpm/log4j@1.0");
-```
-
-`guac-rs/lib/tests/path.rs`
-
-```rust
-    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-c@1.0");
-    add_dep!(client, "pkg:rpm/component-c@1.0", "pkg:rpm/component-d@1.0");
-    add_dep!(client, "pkg:rpm/component-a@1.0", "pkg:rpm/component-d@1.0");
-    add_dep!(client, "pkg:rpm/component-d@1.0", "pkg:rpm/component-e@1.0");
-    add_dep!(client, "pkg:rpm/component-e@1.0", "pkg:rpm/log4j@1.0");
-```
-
-`guac-rs/lib/tests/path.rs`
-
-### 🦀 20
-
-> [!WARNING]
-> Almost the same
+### 🦀 16
 
 ```rust
     client
@@ -804,10 +776,7 @@ impl From<&AllCertifyVulnTreePackageNamespacesNamesVersions> for PackageVersion 
 
 `guac-rs/lib/tests/vuln_equal.rs`
 
-### 🦀 21
-
-> [!WARNING]
-> Almost the same
+### 🦀 17
 
 ```rust
     let _found_vulns = client
@@ -839,10 +808,7 @@ impl From<&AllCertifyVulnTreePackageNamespacesNamesVersions> for PackageVersion 
 
 `guac-rs/lib/tests/vuln_equal.rs`
 
-### 🦀 22
-
-> [!WARNING]
-> Almost the same
+### 🦀 18
 
 ```rust
     let _result = client
