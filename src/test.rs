@@ -3,7 +3,7 @@ mod tests {
     use crate::util;
 
     fn get_code_blocks() -> Vec<String> {
-        let files = util::rust_files(".", "test").expect("rust files not found.");
+        let files = util::rust_files(".", "duplicrabs").expect("rust files not found.");
         let path_as_str = files[0].to_string_lossy();
         let content = util::read_file_content(&path_as_str);
         util::code_blocks(content.unwrap().as_str())

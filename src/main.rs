@@ -17,7 +17,7 @@ struct Cli {
     #[arg(short, value_name = "threshold", default_value_t = 0.98)]
     t: f64,
     /// Ignores scanning with the provided dir name
-    #[arg(short, value_name = "ignore")]
+    #[arg(short, value_name = "ignore", default_value_t = String::from("duplicrabs"))]
     i: String,
 }
 
