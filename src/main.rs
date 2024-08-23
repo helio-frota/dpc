@@ -1,4 +1,4 @@
-use std::{io, path::Path};
+use std::{fs, io, path::Path};
 
 mod util;
 use clap::Parser;
@@ -43,7 +43,7 @@ fn main() -> Result<(), io::Error> {
             .unwrap_or_else(|| r_as_string.len());
         let file_name = &r_as_string[the_index..];
 
-        let content = util::read_file_content(r.to_string_lossy().into_owned().as_str())?;
+        let content = fs::read_to_string(r.to_string_lossy().into_owned().as_str())?;
         let cbs = util::code_blocks(content.as_str());
 
         for cb in &cbs {

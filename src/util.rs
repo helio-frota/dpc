@@ -1,5 +1,3 @@
-use std::fs::File;
-use std::io::Read;
 use std::path::PathBuf;
 use std::{fs, io};
 
@@ -46,13 +44,6 @@ pub fn rust_files(dir: &str, ignore: &str) -> Result<Vec<PathBuf>, io::Error> {
     }
 
     Ok(files)
-}
-
-pub fn read_file_content(path: &str) -> Result<String, io::Error> {
-    let mut f = File::open(path)?;
-    let mut c = String::new();
-    f.read_to_string(&mut c)?;
-    Ok(c)
 }
 
 pub fn code_blocks(content: &str) -> Vec<String> {
