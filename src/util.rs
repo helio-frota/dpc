@@ -141,11 +141,9 @@ pub fn report(similar_blocks: Vec<(String, String, f64)>) -> String {
             if s.2 == 1.0 {
                 block.push_str(format!("### \u{1F980} {}\n\n", exact_idx).as_str());
                 exact_idx += 1;
-                // exact.push_str(&block);
             } else {
                 block.push_str(format!("### \u{1F980} {}\n\n", almost_idx).as_str());
                 almost_idx += 1;
-                // almost.push_str(&block);
             }
 
             block.push_str("```rust\n");
@@ -160,7 +158,6 @@ pub fn report(similar_blocks: Vec<(String, String, f64)>) -> String {
 
             block.push_str(format!("`{}`\n\n", f2.unwrap_or("n/a")).as_str());
 
-            // out.push_str(format!("### \u{1F980} {}\n\n", idx + 1).as_str());
             if s.2 == 1.0 {
                 exact.push_str(&block);
             } else {
