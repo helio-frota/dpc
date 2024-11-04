@@ -1,47 +1,25 @@
+use std::io;
 use std::path::PathBuf;
-use std::{fs, io};
 
 use strsim::sorensen_dice;
+use walkdir::WalkDir;
 
 /// This function gets all the .rs files from a directory, and returns a
 /// vector with all the paths of the .rs files.
 pub fn rust_files(dir: &str, ignore: &str) -> Result<Vec<PathBuf>, io::Error> {
-    let mut files = Vec::new();
-    let list_ignore: Vec<&str> = ignore.split(',').collect();
-    // Gets all the entries from 'current|argument' dir.
-    let entries = fs::read_dir(dir)?;
-
-    for e in entries {
-        let entry = e?;
-        let path = entry.path();
-
-        if path.is_dir() {
-            if let Some(file_name) = path.file_name() {
-                if let Some(file_name_str) = file_name.to_str() {
-                    if list_ignore.iter().any(|&i| file_name_str.contains(i))
-                        || file_name_str.contains("target")
-                    {
-                        continue;
-                    }
-                }
-            }
-
-            // Take a look at sub dir
-            let temp = rust_files(&path.to_string_lossy(), ignore)?;
-            // .rs found ? Then add to the vector.
-            files.extend(temp);
-        } else if let Some(file_name) = path.file_name() {
-            let file_name_str = file_name.to_string_lossy();
-            if list_ignore.contains(&"test") && file_name_str.ends_with("test.rs") {
-                continue;
-            }
-            // Not a dir and .rs
-            if file_name.to_string_lossy().ends_with(".rs") {
-                // Then adds to the vector.
-                files.push(path);
-            }
-        }
-    }
+    let ignore_list: Vec<&str> = ignore.split(',').collect();
+    let files = WalkDir::new(dir)
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|entry| {
+            let path = entry.path();
+            let path_str = path.to_string_lossy();
+            !path_str.contains("target")
+                && !ignore_list.iter().any(|&ignore| path_str.contains(ignore))
+        })
+        .filter(|entry| entry.path().extension().and_then(|ext| ext.to_str()) == Some("rs"))
+        .map(|entry| entry.path().to_path_buf())
+        .collect();
 
     Ok(files)
 }
