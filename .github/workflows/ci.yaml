@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    name: Test `cargo fmt/check/clippy/test` on ubuntu-latest
+    name: cargo fmt -> check -> clippy -> test
     runs-on: ubuntu-latest
 
     steps:
@@ -13,5 +13,5 @@ jobs:
       - run: |
           cargo fmt --check
           cargo check
-          cargo test
           cargo clippy --all-targets --all-features -- -D warnings -D clippy::unwrap_used -D clippy::expect_used
+          cargo test
